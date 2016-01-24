@@ -1,0 +1,4 @@
+Fixtures
+
+- Fix the ODBC MSAccess Database connetion
+	Download ucanaccess.rar with all 5 jar files and add them as external to the project.

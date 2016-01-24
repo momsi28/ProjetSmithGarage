@@ -1,0 +1,102 @@
+		 MaskFormatter mf1;
+		try {
+			mf1 = new MaskFormatter("###-###-####");
+			mf1.setPlaceholderCharacter('_');
+			txtPhone = new JFormattedTextField(mf1);
+			txtPhone.setEditable(false);
+			
+			txtPhone.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent keyEv) {
+					
+					if(keyEv.getKeyCode() == KeyEvent.VK_ENTER)
+					{
+						
+						cbMarque.removeAllItems();
+						cbModele.removeAllItems();
+						cbAnnee.removeAllItems();
+						
+						
+						//This phone number is for a new Client
+						try {
+								Connection con = ETLFunctions.getConnection();
+								Statement st = con.createStatement();
+								ResultSet rs = st.executeQuery("select * from tblClients WHERE TELEPHONE= '"+ txtPhone.getText()+ "'");
+								if (rs.next())
+								{
+									btnModifier.setEnabled(true);
+									clientID = rs.getInt("ClientID");
+									txtNom.setText(rs.getString("Nom"));
+									txtPrenom.setText(rs.getString("Prenom"));
+									
+									//Load the client cars
+									try {
+										
+										Statement stCar = con.createStatement();
+										ResultSet rsCar = stCar.executeQuery("select * from tblVoitures WHERE CLIENTID = " + clientID);
+																				
+										while(rsCar.next())
+										{
+											
+											ArrayList<Integer> listeVoitures = new ArrayList<Integer>();
+											initial = true;
+											listeVoitures.add(rsCar.getInt("VOITUREID"));
+											cbMarque.addItem(rsCar.getString("Marque").toString());
+											cbModele.addItem(rsCar.getString("Modele"));
+											cbAnnee.addItem(rsCar.getString("Annee"));
+											initial = false;
+										}
+	
+
+									} catch (SQLException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+								else
+								{
+									cbMarque.setEditable(true);
+									cbModele.setEditable(true);
+									cbAnnee.setEditable(true);
+									
+								}
+								
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						//Load Client information
+					}
+				}
+			});
+			txtPhone.setBounds(97, 15, 175, 29);
+			panel_3.add(txtPhone);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		JPanel panel_4 = new JPanel();
+		panel_4.setLayout(null);
+		panel_4.setBackground(SystemColor.menu);
+		panel_4.setBounds(357, 47, 306, 175);
+		panel_2.add(panel_4);
+		
+		cbMarque = new JComboBox();
+		cbMarque.setEditable(true);
+		cbMarque.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent itemE) {
+				
+				if(!initial)
+				{
+					if(itemE.getStateChange() == ItemEvent.SELECTED)
+					{
+				    	int selectedItem = cbMarque.getSelectedIndex();
+				    	cbModele.setSelectedIndex(selectedItem);
+				    	cbMarque.setSelectedIndex(selectedItem);
+					}
+				}
+			}
+		});
+		
