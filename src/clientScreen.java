@@ -736,7 +736,9 @@ public class clientScreen extends JFrame {
 				 table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 				 table.getCellEditor(0,2).stopCellEditing();
 				 
-				 
+
+				 dispose();
+
 			}
 		});
 		btnAnnuler.setBounds(543, 643, 97, 25);

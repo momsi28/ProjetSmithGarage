@@ -1,12 +1,19 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
+
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,12 +23,32 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.LayoutStyle.ComponentPlacement;
+
 import com.toedter.calendar.JDateChooser;
+
+import javax.swing.JSeparator;
 import javax.swing.border.LineBorder;
+
 import java.awt.Color;
+
+
+
+import java.util.Properties;
+
+import com.toedter.calendar.JYearChooser;
+
 import javax.swing.JTextPane;
+
+//import org.eclipse.wb.swing.FocusTraversalOnArray;
+
+
+import java.awt.Component;
 import java.awt.Font;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+
 
 
 public class MainInterface<l> extends JFrame {
@@ -31,24 +58,26 @@ public class MainInterface<l> extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private JTable table;
-	//private JTable table2;
+	int action = 10;
+	int clicks = 0;
 	private JTextPane textPane;
 	// jDatechooser variable
 	
-	public void updateField (int action, JDateChooser dateChooser){
-
+	public void updateField (int actionUPD, JDateChooser dateChooser){
 
 		
+		 actionUPD = action;
 		 Calendar calendar = Calendar.getInstance();
 		 calendar.setTime(dateChooser.getDate());
 		 calendar.getTime();
 		 calendar.set(Calendar.DAY_OF_WEEK, 2);
 		 
 		 // "+" is pressed
-		 if (action == 1) calendar.add(calendar.DATE, 7);
+		 if (actionUPD== 1) calendar.add(calendar.DATE, 7);
 		 // "-" is pressed
-		 if (action == 0) calendar.add(calendar.DATE, -7);
+		 if (actionUPD == 0) calendar.add(calendar.DATE, -7);
 		 
 		 SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 		String dateInsert = calendar.getDisplayName(calendar.DAY_OF_WEEK, calendar.LONG, Locale.CANADA_FRENCH);
@@ -67,15 +96,6 @@ public class MainInterface<l> extends JFrame {
 		 
 		table.updateUI();
 }
-	MouseListener l = new MouseAdapter(){
-		public void mouseClickedHandler ( MouseEvent e){
-			 if (e.getClickCount() == 2) {
-				 JTable rowTable = (JTable)e.getComponent();
-				 int x = rowTable.columnAtPoint(e.getPoint());
-				 int y = rowTable.rowAtPoint(e.getPoint());
-			 System.out.println("la colonne est " +x+ " la ligne est "+y);}
-		}
-	};
 
 	/**
 	 * Launch the application.
@@ -100,7 +120,7 @@ public class MainInterface<l> extends JFrame {
 	 */
 	public MainInterface() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1022, 790);
+		setBounds(15,15, (int)screenSize.getWidth()-75, (int)screenSize.getHeight()-65);
 		contentPane = new JPanel();
 		contentPane.setFont(new Font("Arial Black", Font.BOLD, 13));
 		contentPane.setForeground(Color.MAGENTA);
@@ -108,23 +128,32 @@ public class MainInterface<l> extends JFrame {
 		setContentPane(contentPane);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 65, (int)screenSize.getWidth()-90, (int)screenSize.getHeight()-230);
 
-		scrollPane.setToolTipText("");
-		
 		//pick date
 		JDateChooser dateChooser = new JDateChooser();
 		dateChooser.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		Date currentDate = new Date();
 		dateChooser.setDate(currentDate);
-		//Date lastWeekDate = new Date();
 		@SuppressWarnings("unused")
 		Date choosingDate = dateChooser.getDate();
 		
+		// Update after choosing a date in JDate
+		// increment Clicks when JDateChooser,s button is used
+		dateChooser.getCalendarButton().addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent evtDateChooser){
+					action=10;
+					clicks++;
+				}});
+		// handler of event on JdateChosser 
+		dateChooser.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evtDateChooserP) {
+				
+			if ((currentDate != (dateChooser.getDate()))& (clicks !=0))
+			updateField(action,dateChooser);
+			clicks=0;}
+		});
 
-
-
-
-		
 		textPane = new JTextPane();
 		textPane.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		textPane.setToolTipText("");
@@ -139,8 +168,8 @@ public class MainInterface<l> extends JFrame {
 		btnNewButton.setFont(new Font("Arial Black", Font.BOLD, 9));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int action1 = 1;
-				updateField(action1,dateChooser);		
+				 action = 1;
+				updateField(action,dateChooser);		
 			}
 		});
 		
@@ -148,8 +177,8 @@ public class MainInterface<l> extends JFrame {
 		button.setFont(new Font("Arial Black", Font.BOLD, 9));
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int action2 = 0;
-				updateField(action2,dateChooser);		
+				action = 0;
+				updateField(action,dateChooser);		
 			}
 		});
 		
@@ -167,7 +196,7 @@ public class MainInterface<l> extends JFrame {
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
 							.addGap(34)
-							.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 113, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -179,8 +208,8 @@ public class MainInterface<l> extends JFrame {
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 							.addComponent(dateChooser, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 							.addComponent(button, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
-						.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+						.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+						.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(128, Short.MAX_VALUE))
 		);
 //		dateChooser.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{dateChooser.getCalendarButton()}));
@@ -188,19 +217,7 @@ public class MainInterface<l> extends JFrame {
         
        // constructs the table
        String[] columnNames = new String[] {"Horaires", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
-       Object[][] rowData =  new Object[][] {
-    					{"09H00", null, null, null, null, null, null},
-    					{"10H00", null, null, null, null, null, null},
-    					{"11H00", null, null, null, null, null, null},
-    					{"12H00", null, null, null, null, null, null},
-    					{"13H00", null, null, null, null, null, null},
-    					{"14H00", null, null, null, null, null, null},
-    					{"15H00", null, null, null, null, null, null},
-    					{"16H00", null, null, null, null, null, null},
-    					{"17H00", null, null, null, null, null, null},
-    					{"18H00", null, null, null, null, null, null},
-    					{"19H00", null, null, null, null, null, null}, 
-       };
+       Object[][] rowData =  new Object[][] {};
 /**       
        table2 = new JTable(rowData, columnNames);
        table2.getTableHeader().setDefaultRenderer(new HeaderRenderer());
@@ -263,16 +280,12 @@ public class MainInterface<l> extends JFrame {
 				return columnEditables[column];
 			}
 		});
-		int action3 = 10;
-		updateField(action3, dateChooser);
+
+		updateField(action, dateChooser);
 		
 		
 		scrollPane.setViewportView(table);
 		contentPane.setLayout(gl_contentPane);
-		
-		
-		
-		
-		
+
 	}
 }

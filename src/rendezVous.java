@@ -108,6 +108,7 @@ public class rendezVous extends JFrame {
 	private JComboBox cbDuree;
 	ArrayList<String>listeHeureNA = new ArrayList<String>();
 	
+
 		/**
 	 * Launch the application.
 	 */
@@ -294,7 +295,22 @@ public class rendezVous extends JFrame {
 					}
 			}
 			System.out.println(listeHeureNA);
-			isRVAvailable();
+			if(isRVAvailable())
+			{
+				//Construit la String a envoyer pour le RV.
+				
+				String RV = txtPrenom.getText() + " " + txtNom.getText() +"\n" + cbMarque.getSelectedItem().toString() + " - " + txtModele.getText() + " \n"
+							+ txtReparations.getText();
+				
+				Principale pc = new Principale();
+				pc.getTable().setValueAt(RV,5, 5);
+				pc.setVisible(true);
+				System.out.println(RV);
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(null, "Rendez-Vous non disponible !");
+			}
 		} catch (SQLException | ParseException  e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
