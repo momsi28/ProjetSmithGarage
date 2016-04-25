@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.SystemColor;
+import java.awt.TextArea;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -298,10 +299,9 @@ public class rendezVous extends JFrame {
 			if(isRVAvailable())
 			{
 				//Construit la String a envoyer pour le RV.
-				
-				String RV = txtPrenom.getText() + " " + txtNom.getText() +"\n" + cbMarque.getSelectedItem().toString() + " - " + txtModele.getText() + " \n"
+								
+				String RV = txtPrenom.getText() + " " + txtNom.getText() +" \n" + cbMarque.getSelectedItem().toString() + " - " + txtModele.getText() + " \n"
 							+ txtReparations.getText();
-				
 				Principale pc = new Principale();
 				pc.getTable().setValueAt(RV,5, 5);
 				pc.setVisible(true);

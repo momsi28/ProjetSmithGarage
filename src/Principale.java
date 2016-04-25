@@ -74,10 +74,6 @@ public class Principale extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(15, 55, (int)screenSize.getWidth()-120, (int)screenSize.getHeight()-201);
-		contentPane.add(scrollPane);
-		
 		Date currentDate = new Date();
 		
 		
@@ -87,9 +83,9 @@ public class Principale extends JFrame {
 		table.setRowHeight(45);
 		table.setCellSelectionEnabled(true);
 		table.setFillsViewportHeight(true);
-		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				{"09H00", null, null, null, null, null, null},
+		table.setModel(new MyTableModel(
+			new String[][] {
+				{"09H00\nMomar", null, null, null, null, null, null},
 				{"09H30", null, null, null, null, null, null},
 				{"10H00", null, null, null, null, null, null},
 				{"10H30", null, null, null, null, null, null},
@@ -147,7 +143,11 @@ public class Principale extends JFrame {
 		//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.getColumnModel().getColumn(0).setPreferredWidth(25);
 		table.setDefaultRenderer(String.class, new MultiLineCellRenderer());
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setBounds(15, 55, (int)screenSize.getWidth()-120, (int)screenSize.getHeight()-201);
 		scrollPane.setViewportView(table);
+		contentPane.add(scrollPane);
+
 
 		
 		JDateChooser dateChooser = new JDateChooser();
